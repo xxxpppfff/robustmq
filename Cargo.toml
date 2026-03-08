@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "src/common/base",
+    # "src/common/base",
     "src/placement-center",
     "src/cmd",
     "src/protocol",
@@ -25,4 +25,4 @@ serde_json = "1.0"
 placement-center = { path = "src/placement-center" }
 cmd = { path = "src/cmd" }
 protocol = { path = "src/protocol" }
-common-base = { path = "src/common/base" }
+#common-base = { path = "src/common/base" }
