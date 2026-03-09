@@ -7,11 +7,9 @@ license.workspace = true
 [dependencies]
 clap = { version = "4.5.60", features = ["derive"] }
 
-
-# [dependencies]
-# [[bin]]
-# name = "placement-center"
-# path = "src/placement-center/server.rs"
+ [[bin]]
+ name = "placement-center"
+ path = "src/placement-center/server.rs"
 
 
 # [[bin]]
