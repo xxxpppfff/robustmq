@@ -1,6 +1,5 @@
 /target
-.vscode
-logs
+logs/
 .idea/.gitignore
 .idea/modules.xml
 .idea/robustmq.iml
