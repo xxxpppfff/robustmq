@@ -1,2 +1,7 @@
 /target
-./log
+.vscode
+logs
+.idea/.gitignore
+.idea/modules.xml
+.idea/robustmq.iml
+.idea/vcs.xml
