@@ -1,0 +1,2 @@
+node_id = 1 # 节点 ID
+grpc_port = 1228 # 节点监听的 GRPC 端口
