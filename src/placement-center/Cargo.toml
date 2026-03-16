@@ -3,3 +3,9 @@ name = "placement-center"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
+
+[dependencies]
+rocksdb.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+common-base.workspace = true

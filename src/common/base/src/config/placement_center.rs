@@ -9,6 +9,7 @@ pub struct PlacementCenterConfig {
     pub node_id: u32,
     #[serde(default = "default_grpc_port")]
     pub grpc_port: usize,
+    pub data_path: String,
     pub log: Log,
 }
 
