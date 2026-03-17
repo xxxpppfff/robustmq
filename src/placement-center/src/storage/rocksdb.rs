@@ -3,6 +3,7 @@ use common_base::errors::RobustMQError;
 use rocksdb::{ColumnFamily, DBCompactionStyle, Options, SliceTransform, DB};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
+use log::error;
 use std::collections::HashMap;
 use std::path::Path;
 
@@ -67,7 +68,15 @@ impl RocksDBEngine {
         }
     }
 
-    // TODO: 写入数据
+    // TODO: 写入str数据
+    pub fn write_str(&self, cf: &ColumnFamily, key: &str, value: String) -> Result<(), String> {
+        self.db
+            .put_cf(cf, key, value.into_bytes())
+            .map_err(|e| format!("Failed to put to ColumnFamily:{:?}", e))
+    }
+
+
+    // TODO: 读取数据
     pub fn read<T: DeserializeOwned>(
         &self,
         cf: &ColumnFamily,
@@ -126,6 +135,43 @@ impl RocksDBEngine {
         result
     }
 
+    // TODO: 读取全部
+    pub fn read_all(&self) -> HashMap<String, Vec<HashMap<String, String>>> {
+        let mut result : HashMap<String, Vec<HashMap<String, String>>> = HashMap::new();
+        for family in column_family_list().iter() {
+            let cf = self.get_column_family();
+            result.insert(family.to_string(), self.read_all_by_cf(cf));
+        }
+        return result;
+    }
+
+    // TODO: 读取列族中的所有数据
+    pub fn read_all_by_cf(&self, cf: &ColumnFamily) -> Vec<HashMap<String, String>> { 
+        let mut iter = self.db.raw_iterator_cf(cf);
+        iter.seek_to_first();
+
+        let mut result: Vec<HashMap<String, String>> = Vec::new();
+        while iter.valid() {
+            if let Some(key) = iter.key() {
+                if let Some(val) = iter.value() {
+                    match String::from_utf8(key.to_vec()) {
+                        Ok(key) => match String::from_utf8(val.to_vec()){
+                            Ok(da) => {
+                                let mut raw = HashMap::new();
+                                raw.insert(key, da);
+                                result.push(raw);
+                            }
+                            Err(e) => {error!("{}", e);}
+                        },
+                        Err(e) => {error!("{}", e);},
+                    }
+                }
+            }
+            iter.next();
+        }
+        return result
+    }
+
     // TODO: 根据key删除数据
     pub fn delete(&self, cf: &ColumnFamily, key: &str) -> Result<(), RobustMQError> {
         Ok(self.db.delete_cf(cf, key)?)
@@ -134,6 +180,11 @@ impl RocksDBEngine {
     // TODO: 判断key是否存在
     pub fn exists(&self, cf: &ColumnFamily, key: &str) -> bool {
         self.db.key_may_exist_cf(cf, key)
+    }
+
+    // TODO: 获取列族
+    pub fn cf_cluster(&self) -> &ColumnFamily {
+        self.db.cf_handle(&DB_COLUMN_FAMILY_CLUSTER).unwrap()
     }
 
     // TODO: 配置初始化
@@ -160,5 +211,10 @@ impl RocksDBEngine {
         opts.set_memtable_prefix_bloom_ratio(0.2);
 
         opts
+    }
+
+    // TODO: 获取列族
+    pub fn get_column_family(&self) -> &ColumnFamily {
+        self.cf_cluster()
     }
 }

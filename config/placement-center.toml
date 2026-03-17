@@ -1,5 +1,9 @@
+cluster_name = "placement-test"
+addr = "127.0.0.1"
 node_id = 1 # 节点 ID
 grpc_port = 1228 # 节点监听的 GRPC 端口
+http_port = 8971 # 节点监听的 HTTP 端口
+data_path = "/tmp/placement-center/local" # 数据存储路径
 
 [log]
 log_config = "./config/log4rs.yaml"

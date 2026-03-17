@@ -1021,6 +1021,7 @@ name = "placement-center"
 version = "0.0.1"
 dependencies = [
  "common-base",
+ "log",
  "rocksdb",
  "serde",
  "serde_json",

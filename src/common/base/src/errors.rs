@@ -11,7 +11,7 @@ pub enum RobustMQError {
     ParameterCannotBeNull(String),
 
     #[error("{0}")]
-    CommmonError(String),
+    CommonError(String),
 
     #[error("{0}")]
     RocksdbError(#[from] rocksdb::Error),
