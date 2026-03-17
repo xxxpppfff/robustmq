@@ -5,7 +5,6 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::path::Path;
-use std::string::FromUtf8Error;
 
 pub const DB_COLUMN_FAMILY_CLUSTER: &str = "cluster";
 
@@ -36,6 +35,12 @@ impl RocksDBEngine {
             // 如果列族不存在则创建
             if cf_list.iter().find(|cf| cf == &family).is_none() {
                 // TODO:创建列族
+                match instance.create_cf(family, &ops) {
+                    Ok(_) => {}
+                    Err(err) => {
+                        panic!("Failed to create ColumnFamily: {:?}", err);
+                    }
+                }
             }
         }
 
@@ -100,12 +105,23 @@ impl RocksDBEngine {
             let key = iter.key();
             let value = iter.value();
 
-            // let mut raw = HashMap::new();
+            let mut raw = HashMap::new();
+
             if key == None || value == None {
                 continue;
             }
+            let result_key = match String::from_utf8(key.unwrap().to_vec()) {
+                Ok(s) => s,
+                Err(_) => continue,
+            };
+            // 判断获取到的数据的 Key 是否是搜索的前缀，否则，退出循环。
+            if !result_key.starts_with(search_key) {
+                break;
+            }
+            raw.insert(result_key, value.unwrap().to_vec());
+            result.push(raw);
 
-            iter.next() ;
+            iter.next();
         }
         result
     }
