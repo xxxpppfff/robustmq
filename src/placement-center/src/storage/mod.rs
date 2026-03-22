@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 
 pub mod rocksdb;
 pub mod kv;
+pub mod keys;
 pub mod engine;
+pub mod raft;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StorageDataWrap {
